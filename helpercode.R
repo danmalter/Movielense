@@ -1,0 +1,5 @@
+library(proxy)
+library(recommenderlab)
+library(reshape2)
+movies2 <- read.csv("movies2.csv", header = TRUE, stringsAsFactors=FALSE)
+ratings <- read.csv("ratings.csv", header = TRUE)
