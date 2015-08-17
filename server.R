@@ -50,7 +50,7 @@ shinyServer(function(input, output) {
         #Convert rating matrix into a sparse matrix
         ratingmat2 <- as(ratingmat2, "realRatingMatrix")
         
-        #Create Recommender Model. "UBCF" stands for user-based collaborative filtering
+        #Create Recommender Model
         recommender_model <- Recommender(ratingmat2, method = "UBCF",param=list(method="Cosine",nn=30))
         recom <- predict(recommender_model, ratingmat2[1], n=10)
         recom_list <- as(recom, "list")
