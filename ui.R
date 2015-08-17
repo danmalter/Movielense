@@ -7,7 +7,7 @@ library(reshape2)
 library(plyr)
 library(dplyr)
 library(DT)
-library(repmis)
+library(RCurl)
 source("helpercode.R")
 
 movies2 <- read.csv("movies2.csv", header = TRUE, stringsAsFactors=FALSE)
@@ -20,7 +20,7 @@ shinyUI(dashboardPage(skin="blue",
                           menuItem("Movies", tabName = "movies", icon = icon("star-o")),
                           menuItem("About", tabName = "about", icon = icon("question-circle")),
                           menuItem("Source code", icon = icon("file-code-o"), 
-                                   href = "https://github.com/danmalter/movielense"),
+                                   href = "https://github.com/danmalter/Movielense"),
                           menuItem(
                             list(
                                selectInput("select", label = h5("Select 3 Movies That You Like"),
