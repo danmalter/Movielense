@@ -1,5 +1,5 @@
 #load data
-movies <- read.csv("movies2.csv", header = TRUE, stringsAsFactors=FALSE)
+movies <- read.csv("movies.csv", header = TRUE, stringsAsFactors=FALSE)
 ratings <- read.csv("ratings.csv", header = TRUE)
 
 library(reshape2)

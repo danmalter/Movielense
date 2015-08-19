@@ -1,5 +1,9 @@
 #server.R
 
+movies <- read.csv("movies.csv", header = TRUE, stringsAsFactors=FALSE)
+movies <- movies[with(movies, order(title)), ]
+
+
 shinyServer(function(input, output) {
   
   # Text for the 3 boxes showing average scores
@@ -27,15 +31,37 @@ shinyServer(function(input, output) {
     # Table containing recommendations
     output$table <- renderTable({
       
-      movies2 <- subset(movies2, year >= input$range[1] & year <= input$range[2])
-      movies2 <- subset(movies2, genre1 %in% input$genre| genre2 %in% input$genre | genre3 %in% input$genre
-                        | genre4 %in% input$genre | genre5 %in% input$genre)  
-
+      # Filter for based on genre of selected movies to enhance recommendations
+      cat1 <- subset(movies, title==input$select)
+      cat2 <- subset(movies, title==input$select2)
+      cat3 <- subset(movies, title==input$select3)
+      
+      cat1 <- subset(movies, title=="Shawshank Redemption, The (1994)")
+      cat2 <- subset(movies, title=="Forrest Gump (1994)")
+      cat3 <- subset(movies, title=="Silence of the Lambs, The (1991)")
+      
+      # If all 3 genres contains 'Sci-Fi' then only return sci-fi movies 
+      if (grepl("Sci-Fi", cat1$genres) & grepl("Sci-Fi", cat2$genres) & grepl("Sci-Fi", cat3$genres)) {
+        movies2 <- (movies[grepl("Sci-Fi", movies$genres) , ])
+      }
+      # If all 3 genres contains 'Children' then only return children movies
+      else if (grepl("Children", cat1$genres) & grepl("Children", cat2$genres) & grepl("Children", cat3$genres)) {
+        movies2 <- movies[grepl("Children", movies$genres) , ]
+      }
+      else {
+        movies2 <- movies[grepl(cat1$genre1, movies$genres) 
+                          | grepl(cat2$genre1, movies$genres)
+                          | grepl(cat3$genre1, movies$genres)
+                          | grepl(cat1$genre2, movies$genres) 
+                          | grepl(cat2$genre2, movies$genres)
+                          | grepl(cat3$genre2, movies$genres), ]
+      }
+      
       movie_recommendation <- function(input,input2,input3){
         row_num <- which(movies2[,3] == input)
         row_num2 <- which(movies2[,3] == input2)
         row_num3 <- which(movies2[,3] == input3)
-        userSelect <- matrix(NA,8552)
+        userSelect <- matrix(NA,length(unique(ratings$movieId)))
         userSelect[row_num] <- 5 #hard code first selection to rating 5
         userSelect[row_num2] <- 4 #hard code second selection to rating 4
         userSelect[row_num3] <- 3 #hard code third selection to rating 3
@@ -64,7 +90,7 @@ shinyServer(function(input, output) {
       movie_recommendation(input$select, input$select2, input$select3)
     })
     
-    movie.ratings <- merge(ratings, movies2)
+    movie.ratings <- merge(ratings, movies)
     output$tableRatings1 <- renderValueBox({
       movie.avg1 <- summarise(subset(movie.ratings, title==input$select),
                               Average_Rating1 = mean(rating, na.rm = TRUE))
@@ -76,7 +102,7 @@ shinyServer(function(input, output) {
       )
     })
     
-    movie.ratings <- merge(ratings, movies2)
+    movie.ratings <- merge(ratings, movies)
     output$tableRatings2 <- renderValueBox({
       movie.avg2 <- summarise(subset(movie.ratings, title==input$select2),
                               Average_Rating = mean(rating, na.rm = TRUE))
@@ -88,7 +114,7 @@ shinyServer(function(input, output) {
       )
     })
     
-    movie.ratings <- merge(ratings, movies2)
+    movie.ratings <- merge(ratings, movies)
     output$tableRatings3 <- renderValueBox({
       movie.avg3 <- summarise(subset(movie.ratings, title==input$select3),
                 Average_Rating = mean(rating, na.rm = TRUE))
@@ -103,7 +129,7 @@ shinyServer(function(input, output) {
     
     # Generate a table summarizing each players stats
     output$myTable <- renderDataTable({
-      movies2[c("title", "genres")]
+      movies[c("title", "genres")]
     })
     
 }

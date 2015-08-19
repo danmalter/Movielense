@@ -8,10 +8,12 @@ library(plyr)
 library(dplyr)
 library(DT)
 library(RCurl)
-source("helpercode.R")
 
-movies2 <- read.csv("movies2.csv", header = TRUE, stringsAsFactors=FALSE)
-movies2 <- movies2[with(movies2, order(title)), ]
+movies <- read.csv("movies.csv", header = TRUE, stringsAsFactors=FALSE)
+movies <- movies[with(movies, order(title)), ]
+
+ratings <- read.csv("ratings10M.csv", header = TRUE)
+
 
 shinyUI(dashboardPage(skin="blue",
                       dashboardHeader(title = "Movie Recommenders"),
@@ -23,42 +25,33 @@ shinyUI(dashboardPage(skin="blue",
                                    href = "https://github.com/danmalter/Movielense"),
                           menuItem(
                             list(
-                               selectInput("select", label = h5("Select 3 Movies That You Like"),
-                                              choices = as.character(movies2$title[1:8552]),
-                                              selectize = FALSE,
-                                              selected = "Dark Knight Rises, The (2012)"),
-                                 selectInput("select2", label = NA,
-                                             choices = as.character(movies2$title[1:8552]),
-                                             selectize = FALSE,
-                                             selected = "My Cousin Vinny (1992)"),
-                                 selectInput("select3", label = NA,
-                                             choices = as.character(movies2$title[1:8552]),
-                                             selectize = FALSE,
-                                             selected = "Space Jam (1996)"),
-                                 submitButton("Submit")
+                              
+                              selectInput("select", label = h5("Select 3 Movies That You Like"),
+                                          choices = as.character(movies$title[1:length(unique(movies$movieId))]),
+                                          selectize = FALSE,
+                                          selected = "Shawshank Redemption, The (1994)"),
+                              selectInput("select2", label = NA,
+                                          choices = as.character(movies$title[1:length(unique(movies$movieId))]),
+                                          selectize = FALSE,
+                                          selected = "Forrest Gump (1994)"),
+                              selectInput("select3", label = NA,
+                                          choices = as.character(movies$title[1:length(unique(movies$movieId))]),
+                                          selectize = FALSE,
+                                          selected = "Silence of the Lambs, The (1991)"),
+                              submitButton("Submit")
                             )
-                          ),
-                          sliderInput("range", "Slide to select a date range:",
-                                      min = 1901, max = 2015, sep = "",
-                                      value = c(1901, 2015), step = 1),
-                                      HTML
-                                      ("<div style='font-size: 12px;'> Slider must contain the min/max years </div>"),
-                                      HTML
-                                      ("<div style='font-size: 12px;'> of selected movies </div>"),
-                          menuItem(
-                            checkboxGroupInput("genre", label = h5("Genre of Recommendations:"),
-                                                c("Action", "Adventure", "Animation", "Childrens",
-                                                  "Comedy", "Crime", "Documentary", "Drama",
-                                                  "Fantasy", "Film-Noir", "Horror", "Musical",
-                                                  "Mystery", "Romance", "Sci-Fi", "Thriller",
-                                                  "War", "Western"),
-                                                selected = c("Action", "Adventure", "Animation", "Childrens",
-                                                             "Comedy", "Crime", "Documentary", "Drama",
-                                                             "Fantasy", "Film-Noir", "Horror", "Musical",
-                                                             "Mystery", "Romance", "Sci-Fi", "Thriller",
-                                                             "War", "Western"),
-                                                inline = FALSE))
-                         )
+                          )
+#                          menuItem(
+#                             checkboxGroupInput("genre", label = h5("Genre of Recommendations:"),
+#                                                 c("Action", "Adventure", "Animation", "Childrens",
+#                                                   "Comedy", "Crime", "Documentary", "Drama",
+#                                                   "Fantasy", "Film-Noir", "Horror", "Musical",
+#                                                   "Mystery", "Romance", "Sci-Fi", "Thriller",
+#                                                   "War", "Western"),
+#                                                 selected = c("Action", "Adventure", "Comedy", "Crime", 
+#                                                              "Documentary", "Drama", "Romance", "Thriller"),
+#                                                 inline = FALSE))
+                          )
                       ),
                       
                       
@@ -103,7 +96,7 @@ shinyUI(dashboardPage(skin="blue",
                                     valueBoxOutput("tableRatings2"),
                                     valueBoxOutput("tableRatings3"),
                                     HTML('<br/>'),
-                                    box(DT::dataTableOutput("myTable"), title = "Table of Movies", width=12, collapsible = TRUE)
+                                    box(DT::dataTableOutput("myTable"), title = "Table of All Movies", width=12, collapsible = TRUE)
                                 )
                             )
                         )
