@@ -2,7 +2,7 @@
 
 movies <- read.csv("movies.csv", header = TRUE, stringsAsFactors=FALSE)
 movies <- movies[with(movies, order(title)), ]
-
+ratings <- read.csv("ratings100k.csv", header = TRUE)
 
 shinyServer(function(input, output) {
   
@@ -36,25 +36,18 @@ shinyServer(function(input, output) {
       cat2 <- subset(movies, title==input$select2)
       cat3 <- subset(movies, title==input$select3)
       
-      cat1 <- subset(movies, title=="Shawshank Redemption, The (1994)")
-      cat2 <- subset(movies, title=="Forrest Gump (1994)")
-      cat3 <- subset(movies, title=="Silence of the Lambs, The (1991)")
-      
-      # If all 3 genres contains 'Sci-Fi' then only return sci-fi movies 
-      if (grepl("Sci-Fi", cat1$genres) & grepl("Sci-Fi", cat2$genres) & grepl("Sci-Fi", cat3$genres)) {
+      # If genre contains 'Sci-Fi' then  return sci-fi movies 
+      if (grepl("Sci-Fi", cat1$genres) | grepl("Sci-Fi", cat2$genres) | grepl("Sci-Fi", cat3$genres)) {
         movies2 <- (movies[grepl("Sci-Fi", movies$genres) , ])
       }
-      # If all 3 genres contains 'Children' then only return children movies
-      else if (grepl("Children", cat1$genres) & grepl("Children", cat2$genres) & grepl("Children", cat3$genres)) {
-        movies2 <- movies[grepl("Children", movies$genres) , ]
+      # If genre contains 'Children' then  return children movies
+      else if (grepl("Children", cat1$genres) | grepl("Children", cat2$genres) | grepl("Children", cat3$genres)) {
+        movies2 <- movies[grepl("Children", movies$genres), ]
       }
       else {
         movies2 <- movies[grepl(cat1$genre1, movies$genres) 
                           | grepl(cat2$genre1, movies$genres)
-                          | grepl(cat3$genre1, movies$genres)
-                          | grepl(cat1$genre2, movies$genres) 
-                          | grepl(cat2$genre2, movies$genres)
-                          | grepl(cat3$genre2, movies$genres), ]
+                          | grepl(cat3$genre1, movies$genres), ]
       }
       
       movie_recommendation <- function(input,input2,input3){

@@ -12,7 +12,7 @@ library(RCurl)
 movies <- read.csv("movies.csv", header = TRUE, stringsAsFactors=FALSE)
 movies <- movies[with(movies, order(title)), ]
 
-ratings <- read.csv("ratings10M.csv", header = TRUE)
+ratings <- read.csv("ratings100k.csv", header = TRUE)
 
 
 shinyUI(dashboardPage(skin="blue",

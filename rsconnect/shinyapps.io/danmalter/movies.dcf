@@ -1,8 +1,8 @@
 name: movies
 account: danmalter
 server: shinyapps.io
-bundleId: 240582
+bundleId: 244828
 url: https://danmalter.shinyapps.io/movies
-when: 1439658564.26296
+when: 1440029839.34841
 asMultiple: FALSE
 asStatic: FALSE
