@@ -37,14 +37,12 @@ shinyServer(function(input, output) {
       cat3 <- subset(movies, title==input$select3)
       
       # If genre contains 'Sci-Fi' then  return sci-fi movies 
+      # If genre contains 'Children' then  return children movies
       if (grepl("Sci-Fi", cat1$genres) | grepl("Sci-Fi", cat2$genres) | grepl("Sci-Fi", cat3$genres)) {
         movies2 <- (movies[grepl("Sci-Fi", movies$genres) , ])
-      }
-      # If genre contains 'Children' then  return children movies
-      else if (grepl("Children", cat1$genres) | grepl("Children", cat2$genres) | grepl("Children", cat3$genres)) {
+      } else if (grepl("Children", cat1$genres) | grepl("Children", cat2$genres) | grepl("Children", cat3$genres)) {
         movies2 <- movies[grepl("Children", movies$genres), ]
-      }
-      else {
+      } else {
         movies2 <- movies[grepl(cat1$genre1, movies$genres) 
                           | grepl(cat2$genre1, movies$genres)
                           | grepl(cat3$genre1, movies$genres), ]
@@ -57,7 +55,7 @@ shinyServer(function(input, output) {
         userSelect <- matrix(NA,length(unique(ratings$movieId)))
         userSelect[row_num] <- 5 #hard code first selection to rating 5
         userSelect[row_num2] <- 4 #hard code second selection to rating 4
-        userSelect[row_num3] <- 3 #hard code third selection to rating 3
+        userSelect[row_num3] <- 4 #hard code third selection to rating 3
         userSelect <- t(userSelect)
         
         ratingmat <- dcast(ratings, userId~movieId, value.var = "rating", na.rm=FALSE)
@@ -71,16 +69,18 @@ shinyServer(function(input, output) {
         
         #Create Recommender Model
         recommender_model <- Recommender(ratingmat2, method = "UBCF",param=list(method="Cosine",nn=30))
-        recom <- predict(recommender_model, ratingmat2[1], n=10)
+        recom <- predict(recommender_model, ratingmat2[1], n=30)
         recom_list <- as(recom, "list")
-        recom_result <- data.frame(matrix(NA,10))
-        recom_result[1:10,1] <- movies2[as.integer(recom_list[[1]][1:10]),3]
+        recom_result <- data.frame(matrix(NA,30))
+        recom_result[1:30,1] <- movies2[as.integer(recom_list[[1]][1:30]),3]
+        recom_result <- data.frame(na.omit(recom_result[order(order(recom_result)),]))
+        recom_result <- data.frame(recom_result[1:10,])
         colnames(recom_result) <- "User-Based Collaborative Filtering Recommended Titles"
         return(recom_result)
       }
-
       
       movie_recommendation(input$select, input$select2, input$select3)
+
     })
     
     movie.ratings <- merge(ratings, movies)
@@ -93,6 +93,7 @@ shinyServer(function(input, output) {
         icon = if (movie.avg1 >= 3) icon("thumbs-up") else icon("thumbs-down"),
         color = if (movie.avg1 >= 3) "aqua" else "red"
       )
+      
     })
     
     movie.ratings <- merge(ratings, movies)
