@@ -55,7 +55,7 @@ shinyServer(function(input, output) {
         userSelect <- matrix(NA,length(unique(ratings$movieId)))
         userSelect[row_num] <- 5 #hard code first selection to rating 5
         userSelect[row_num2] <- 4 #hard code second selection to rating 4
-        userSelect[row_num3] <- 4 #hard code third selection to rating 3
+        userSelect[row_num3] <- 4 #hard code third selection to rating 4
         userSelect <- t(userSelect)
         
         ratingmat <- dcast(ratings, userId~movieId, value.var = "rating", na.rm=FALSE)
