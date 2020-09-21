@@ -28,7 +28,7 @@ recom_result <- matrix(0,10)
 for (i in c(1:10)){
   recom_result[i] <- as.integer(recom_list[[1]][i])
 }
-recom_result<-as.data.frame(movies[recom_result,2])
+recom_result<-as.data.frame(subset(movies, movieId %in% recom_result)[,2])
 colnames(recom_result)<-list("Top-10 Movies")
 recom_result
 
